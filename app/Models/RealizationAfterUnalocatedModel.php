@@ -66,5 +66,20 @@ class RealizationAfterUnalocatedModel extends Model
                 ->get();
         return $query->getRow();
     }
+
+    public function cekSoh($owner_id, $material_id, $wh_id, $expired_date, $block_type, $row_alias, $row_number, $block_number)
+    {
+        $query = $this->db->table($this->table)
+                ->where('owner_id', $owner_id)
+                ->where('material_id', $material_id)
+                ->where('wh_id', $wh_id)
+                ->where('expired_date', $expired_date)
+                ->where('block_type', $block_type)
+                ->where('row_alias', $row_alias)
+                ->where('row_number', $row_number)
+                ->where('block_number', $block_number)
+                ->get();
+        return $query->num_rows();
+    }
 }
 ?>

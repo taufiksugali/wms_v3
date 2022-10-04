@@ -30,6 +30,7 @@ $(".modal-pallet").click(function(){
 			$("#blockNumber").val(data['block_number']);
 
 			$("#MPInboundId").html("<option>Select-Inbound</option>");
+			$("#MPMaterialName").html("<option data-qty='0'>Select-Material</option>");
 
 			let name= "Put Material to pallet "+data['row_alias']+' '+data['row_number']+" > Block "+data['block_number'] ;
 			$("#modalPalletTitle").html(name);
@@ -38,7 +39,7 @@ $(".modal-pallet").click(function(){
 			let result = JSON.stringify(datax);
 			console.log(datax);
 			$("#maxCapacity").val(data['max_capacity']);
-
+			// $("#availableCapacity").val(datax[0][0]['stok']);
 
 			// inboundID
 			for (var i = 0; i < datax.length ; i++) {
@@ -49,7 +50,7 @@ $(".modal-pallet").click(function(){
 
 			// inbounsID change
 			$("#MPInboundId").change(function(){
-				$("#MPMaterialName").html("<option data-qty='0'>Select-Material</option>");
+				
 				$("#MPMaterialQty").val('');
 
 				let id_inbound = $(this).val();
@@ -75,6 +76,9 @@ $(".modal-pallet").click(function(){
 
 			$("#palletModal").modal('toggle');
 
+		},
+		error: function(datax){
+			console.log(datax);
 		}
 	});
 })

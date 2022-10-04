@@ -266,7 +266,7 @@
                             <label>Space Available(bag)
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="number" name="max_capacity" class="form-control " disabled />
+                            <input type="number" name="max_capacity" class="form-control" id="availableCapacity" disabled />
                         </div>   
                     </div>                                      
                 </div>

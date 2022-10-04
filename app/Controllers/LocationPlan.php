@@ -5,6 +5,7 @@ use App\Models\WarehouseModel;
 use App\Models\LocDesignModel;
 use App\Models\RealizationAfterModel;
 use App\Models\RealizationAfterUnalocatedModel;
+use App\Models\LocationSohModel;
 use Config\Services;
 
 /**
@@ -19,6 +20,7 @@ class LocationPlan extends BaseController
 		$this->locdesign = new LocDesignModel;
 		$this->reafmod = new RealizationAfterModel;
 		$this->reafun = new RealizationAfterUnalocatedModel;
+		$this->locsoh = new LocationSohModel;
 	}
 
 	public function index()
@@ -56,11 +58,12 @@ class LocationPlan extends BaseController
 		$number = 0;
 		foreach ($unalocated_inbound as $id) {
 			$json[$number] = $this->reafun->materialDetail($id->inbound_id, $wh);
-			// $total_quantity = $this->
-
-
 			$number++;
 		}
+
+		$stok = $this->locsoh->getTotalItemInStorageForPallet('pallet', $data->row_alias, $data->row_number, $data->block_number, $data->wh_id);
+
+		$jason[0]['test'] = 100;
 
 		echo json_encode($json);
 	}
@@ -78,7 +81,7 @@ class LocationPlan extends BaseController
 		$owner_id = $data->owner_id;
 
 		$wh_id = $this->reafmod->allByInbound($inbound_id)->wh_id;
-		$detil_realisasi = $this->reafun->getExpiredDate($inbound_id, $material_id)
+		$detil_realisasi = $this->reafun->getExpiredDate($inbound_id, $material_id);
 
 		$data_insert = [
 			'owner_id' => $owner_id,
@@ -92,6 +95,13 @@ class LocationPlan extends BaseController
 			'block_number' => $block_number,
 			'stok' => $qty_put
 		];
+
+		$check_soh = $this->locsoh->cekSoh($owner_id, $material_id, $wh_id, $detil_realisasi->expired_date, 'pallet', $row_alias, $row_number, $block_number);
+		if($check_soh > 0){ //jika data belum ada
+
+		}else{
+			$this->locsoh->insertSoh($data_insert);
+		}
 
 		echo json_encode($data_insert);
 	}

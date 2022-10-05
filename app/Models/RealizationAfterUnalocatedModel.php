@@ -56,13 +56,14 @@ class RealizationAfterUnalocatedModel extends Model
         return $query->getResult();
     }
 
-    public function getExpiredDate($inbound_id, $material_id)
+    public function getExpiredDate($inbound_id, $material_id, $batch_no)
     {
         $query = $this->db->table($this->table)
                 ->select('`realization_after_unalocated`.`expired_date`,
                           `realization_after_unalocated`.`reafun_id` as loc_id')
                 ->where('inbound_id', $inbound_id)
                 ->where('material_id', $material_id)
+                ->where('batch_no', $batch_no)
                 ->get();
         return $query->getRow();
     }
@@ -80,6 +81,39 @@ class RealizationAfterUnalocatedModel extends Model
                 ->where('block_number', $block_number)
                 ->get();
         return $query->num_rows();
+    }
+
+    public function updateStok($id,$data)
+    {
+        $query = $this->db->table($this->table)
+                ->where($this->primaryKey, $id)
+                ->update($data);
+    }
+
+    public function cekSisaStok($inbound_id)
+    {
+        $query = $this->db->table($this->table)
+                ->select('SUM(`realization_after_unalocated`.`good_stok`) as total')
+                ->where('inbound_id', $inbound_id)
+                ->get();
+        return $query->getRow();
+    }
+
+    public function updateStatusAllocated($id, $data)
+    {
+        $query = $this->db->table($this->table)
+                ->where($this->primaryKey, $id)
+                ->update($data);
+    }
+
+    public function getIdByInbound($inbound_id)
+    {
+        $query = $this->db->table($this->table)
+                ->select('`realization_after_unalocated`.`reaf_id`')
+                ->where('inbound_id', $inbound_id)
+                ->get();
+        return $query->getRow;
+
     }
 }
 ?>

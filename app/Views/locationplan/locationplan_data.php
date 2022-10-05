@@ -1,3 +1,4 @@
+
 <!--begin::Content-->
 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
 	<!--begin::Subheader-->
@@ -109,8 +110,28 @@
                                         <div class="mx-5" style="min-width: fit-content;">
                                             <h5 class="text-center" ><?= $result->row_alias." $i" ?></h5>
                                             <?php 
-                                            for ($b=1; $b <= $result->block_number ; $b++) { ?>
-                                                <button class="btn btn-sm btn-outline-light my-1 position-relative overflow-hidden rounded-pill btn-progress <?= ($result->block_type == 'pallet')?'modal-pallet':'modal-rack' ?>" data-bs-toggle="modal"
+                                            for ($b=1; $b <= $result->block_number ; $b++) { 
+                                                $total_stok = 0;
+                                                foreach($all_stok_lokasi as $stok){
+                                                    if($stok->row_alias == $result->row_alias &&
+                                                       $stok->row_number == $i &&
+                                                       $stok->block_number == $b){
+                                                        $total_stok = $total_stok + $stok->stok;
+                                                    }
+                                                }
+                                                $persen = ($total_stok/$result->max_capacity)*100;
+                                                if($persen <= 50){
+                                                    $prog_class = 'btn-progress-50';
+                                                }elseif($persen > 50 && $persen <= 75){
+                                                    $prog_class = 'btn-progress-75';
+                                                }elseif($persen > 75){
+                                                    $prog_class = 'btn-progress-100';
+                                                }else{
+                                                    $prog_class = '';
+                                                }
+
+                                                ?>
+                                                <button class="btn btn-sm btn-outline-light my-1 position-relative overflow-hidden rounded-pill btn-progress <?= ($result->block_type == 'pallet')?'modal-pallet':'modal-rack' ?>" data-bs-toggle="modal"  title = "<?= $persen?> %"
                                                     data-wh_id="<?= $result->wh_id ?>"
                                                     data-loc_id="<?= $result->location_id ?>"
                                                     data-block_type="<?= $result->block_type ?>"
@@ -121,8 +142,11 @@
                                                     <?= ($result->block_type == 'rack')?'data-rack_number="'.$result->rack_number.'"':'' ?>
                                                     data-uom_standard="<?= $result->uom_standard ?>"
                                                     >
-                                                    <div class="btn-progress-indicator text-nowrap"><b><?= "Block ".$b ?></b></div>
-                                                    <div class="btn-progress-50" style="width: 20%;">
+                                                    <div class="btn-progress-indicator text-nowrap">
+                                                        <b><?= "Block ".$b ?></b><br>
+                                                        <!-- <i style="font-size: 0.5rem;">100%</i> -->
+                                                    </div>
+                                                    <div class="<?= $prog_class ?>" style="width: <?= $persen ?>%;" id="<?= $result->row_alias.$i.'_'.$b ?>">
                                                     </div>
                                                 </button>                                                
                                                 <?php
@@ -285,7 +309,7 @@
                         <label><strong>-</strong>
                         </label>
                         <div class="form-group">
-                            <label>Material Qty Available
+                            <label>Goods on staging
                                 <span class="text-danger">*</span>
                             </label>
                             <input type="number" name="max_capacity" class="form-control" id="MPMaterialQty" disabled />
@@ -295,10 +319,14 @@
             </div>
 
             <div class="modal-footer">
-                <input type="text" id="rowAlias">
-                <input type="text" id="rowNumber">
-                <input type="text" id="blockNumber">
-                <input type="text" id="owner_id">
+                <input type="text" hidden id="rowAlias">
+                <input type="text" hidden id="rowNumber">
+                <input type="text" hidden id="blockNumber">
+                <input type="text" hidden id="owner_id">
+                <input type="text" hidden id="batchNumber">
+                <input type="text" hidden id="reafunId">
+                <input type="text" hidden id="max_capacity2">
+                <input type="text" hidden id="availCap">
                 <button type="button" class="btn btn-light" onclick="closeModal('#palletModal')">Close</button>
                 <button type="button" class="btn btn-primary" onclick="savePalet()">Save changes</button>
             </div>

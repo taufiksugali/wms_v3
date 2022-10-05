@@ -35,5 +35,22 @@ class RealizationAfterModel extends Model
                 ->get();
         return $data->getRow();
     }
+
+    public function getIdByInbound($inbound_id)
+    {
+        $query = $this->db->table($this->table)
+                ->select('`realization_after_unalocated`.`reaf_id`')
+                ->where('inbound_id', $inbound_id)
+                ->get();
+        return $query->getRow;
+
+    }
+
+    public function updateStatusAllocated($id, $data)
+    {
+        $query = $this->db->table($this->table)
+                ->where($this->primaryKey, $id)
+                ->update($data);
+    }
 }
 ?>
